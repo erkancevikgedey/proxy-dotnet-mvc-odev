@@ -1,0 +1,215 @@
+﻿@{
+	ViewData["Title"] = "Proxy Listesi";
+}
+
+<div class="row match-height">
+		<div class="col-xl-12 col-md-6 col-12">
+		<div class="card card-statistics">
+			<div class="card-header">
+				<h4 class="card-title">İstatistik</h4>
+				<div class="d-flex align-items-center">
+					<p class="card-text font-small-2 me-25 mb-0">Son eklenen proxy: <span id="songuncelleme">-</span> saat önce</p>
+				</div>
+			</div>
+			<div class="card-body statistics-body">
+				<div class="row">
+					<div class="col-xl-3 col-sm-6 col-12 mb-2 mb-xl-0">
+						<div class="d-flex flex-row">
+							<div class="avatar bg-light-primary me-2">
+								<div class="avatar-content">
+									<i data-feather="trending-up" class="avatar-icon"></i>
+								</div>
+							</div>
+							<div class="my-auto">
+								<h4 id="toplamadet" class="fw-bolder mb-0">- adet</h4>
+								<p class="card-text font-small-3 mb-0">Aktif Proxy Adet</p>
+							</div>
+						</div>
+					</div>
+					<div class="col-xl-3 col-sm-6 col-12 mb-2 mb-xl-0">
+						<div class="d-flex flex-row">
+							<div class="avatar bg-light-info me-2">
+								<div class="avatar-content">
+									<i data-feather="key" class="avatar-icon"></i>
+								</div>
+							</div>
+							<div class="my-auto">
+								<h4 id="httpadet" class="fw-bolder mb-0">- adet</h4>
+								<p class="card-text font-small-3 mb-0">HTTP/s Proxy Adet</p>
+							</div>
+						</div>
+					</div>
+					<div class="col-xl-3 col-sm-6 col-12 mb-2 mb-sm-0">
+						<div class="d-flex flex-row">
+							<div class="avatar bg-light-success me-2">
+								<div class="avatar-content">
+									<i data-feather="key" class="avatar-icon"></i>
+								</div>
+							</div>
+							<div class="my-auto">
+								<h4 id="socks4adet" class="fw-bolder mb-0">- adet</h4>
+								<p class="card-text font-small-3 mb-0">SOCKS4 Proxy Adet</p>
+							</div>
+						</div>
+					</div>
+					<div class="col-xl-3 col-sm-6 col-12">
+						<div class="d-flex flex-row">
+							<div class="avatar bg-light-danger me-2">
+								<div class="avatar-content">
+									<i data-feather="key" class="avatar-icon"></i>
+								</div>
+							</div>
+							<div class="my-auto">
+								<h4 id="socks5adet" class="fw-bolder mb-0">- adet</h4>
+								<p class="card-text font-small-3 mb-0">SOCKS5 Proxy Adet</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row match-height">
+	<div class="col-xl-12 col-md-6 col-12">
+		<div class="card card-statistics">
+			<div class="card-header">
+				<h4 class="card-title">Proxy Listesi</h4>
+				<div class="col-sm-6">
+				<select class="form-select" id="tur"> <option value="">Tür: Hepsi</option> <option value="1">http</option><option value="2">socks4</option><option value="3">socks5</option></select>
+				</div>
+			</div>
+
+			<table id="example" class="display" style="width:100%; text-align: center; margin-bottom:50px">
+				<thead>
+					<tr>
+						<th>Proxy Ip</th>
+						<th>Port</th>
+						<th>Ülke</th>
+						<th>Tür</th>
+						<th>Tarih</th>
+					</tr>
+				</thead>
+			</table>
+			<div class="card-body">
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row match-height">
+	<div class="col-xl-12 col-md-6 col-12">
+		<div class="card card-statistics">
+			<div class="card-header">
+				<h4 class="card-title">Listeyi İndir</h4>
+			</div>
+			<div class="card-body">
+				<div class="row">
+					<div class="col-xl-3 col-sm-6 col-12 mb-2 mb-xl-0">
+						<button type="button" onclick="LinkDonder('all')" class="btn btn-secondary waves-effect waves-float waves-light" style="width: 90%;">
+							<span>Hepsi</span>
+						</button>
+					</div>
+					<div class="col-xl-3 col-sm-6 col-12 mb-2 mb-xl-0">
+						<button type="button" onclick="LinkDonder('http')" class="btn btn-secondary waves-effect waves-float waves-light" style="width: 90%;">
+							<span>HTTP/s</span>
+						</button>
+					</div>
+					<div class="col-xl-3 col-sm-6 col-12 mb-2 mb-sm-0">
+						<button type="button" onclick="LinkDonder('socks4')" class="btn btn-secondary waves-effect waves-float waves-light" style="width: 90%;">
+							<span>SOCKS4</span>
+						</button>
+					</div>
+					<div class="col-xl-3 col-sm-6 col-12">
+						<button type="button" onclick="LinkDonder('socks5')" class="btn btn-secondary waves-effect waves-float waves-light" style="width: 90%;">
+							<span>SOCKS5</span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+@section scripts{
+<script>
+		var ekle = " Adet";
+		var urlOfAll, urlOfHttp, urlOfSocks4, urlOfSocks5;
+		function LinkDonder(tur) {
+                if (tur == "all") {
+					window.open(urlOfAll, "_blank");
+                } else if (tur == "http") {
+					window.open(urlOfHttp, "_blank");
+                } else if (tur == "socks4") {
+					window.open(urlOfSocks4, "_blank");
+                } else if (tur == "socks5") {
+					window.open(urlOfSocks5, "_blank");
+				}
+		}
+
+		function TarihCevir(tarih) {
+			var dateStr = JSON.parse('"'+tarih+'"');
+			var date = new Date(dateStr);
+			return date.toLocaleString('tr-TR');
+		}
+		$(document).ready(function () {
+			var table = $('#example').DataTable( {
+				"ajax": {
+					url:"@Url.Action("getProxyler", "Api")", method:"post",
+					"data": function(d)
+					{
+						d.turId = $("#tur").val();
+					}
+				},
+				"serverSide" :true,
+				ordering: false,
+				"processing":true,
+				"columns": [
+					{data: "ipAddress"},
+					{data: "port"},
+					{data: "country.countryName"},
+					{data: "proxyType.type"},
+					{data: function(data) {
+								return TarihCevir(data.addTime)
+						   }
+					},
+				],
+				language: {
+					lengthMenu: "Tek sayfa _MENU_ adet göster",
+					search: "Ara:",
+					 paginate: {
+					  previous: '&nbsp;',
+					  next: '&nbsp;'
+					},
+					infoEmpty: "Eşleşen proxy yok",
+					info: "Sayfa: _PAGE_ / _PAGES_",
+					infoFiltered: "(_MAX_ adet proxy içerisinde)",
+					zeroRecords: "Proxy yok",
+				},
+				dom: '<"d-flex justify-content-between align-items-center mx-0 row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>t<"d-flex justify-content-between mx-0 row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
+
+			});
+
+			$.get( "@Url.Action("getSayilar", "Api")", function( data ) {
+				$("#toplamadet").html(data.toplam+ekle)
+				$("#httpadet").html(data.httpSayisi+ekle)
+				$("#socks4adet").html(data.socks4Sayisi+ekle)
+				$("#socks5adet").html(data.socks5Sayisi+ekle)
+				$("#songuncelleme").html(data.sonGuncelleme)
+			});
+
+			$.get( "@Url.Action("GetApiUrls", "Api")", function( data ) {
+				urlOfAll = decodeURIComponent(data.all)
+				urlOfHttp = decodeURIComponent(data.http)
+				urlOfSocks4 = decodeURIComponent(data.socks4)
+				urlOfSocks5 = decodeURIComponent(data.socks5)
+			});
+
+            
+			$('#tur').on('change', function() {
+				table.ajax.reload();
+			});
+		});
+	</script>
+}

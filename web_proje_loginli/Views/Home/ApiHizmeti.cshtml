@@ -1,0 +1,69 @@
+﻿@{
+	ViewData["Title"] = "API Hizmeti";
+}
+
+<div class="row match-height">
+
+	<div class="col-md-9">
+		<div class="card">
+			<div class="card-header">
+				<h4 class="card-title">API Hizmet Detayları</h4>
+			</div>
+			<div class="card-body">
+				<div class="mb-1 row">
+					<label for="colFormLabel" class="col-sm-3 col-form-label">Tüm Proxyler ( IP:PORT:TÜR )</label>
+					<div class="col-sm-9">
+						<input type="text" id="ListeAll" class="form-control" id="colFormLabel" value="Yükleniyor..." readonly>
+					</div>
+				</div>
+				<div class="mb-1 row">
+					<label for="colFormLabel" class="col-sm-3 col-form-label">HTTP/s ( IP:PORT )</label>
+					<div class="col-sm-9">
+						<input type="text" id="ListeHttp" class="form-control" id="colFormLabel" value="Yükleniyor..." readonly>
+					</div>
+				</div>
+				<div class="mb-1 row">
+					<label for="colFormLabel" class="col-sm-3 col-form-label">SOCKS4 ( IP:PORT )</label>
+					<div class="col-sm-9">
+						<input type="text" id="ListeSocks4" class="form-control" id="colFormLabel" value="Yükleniyor..." readonly>
+					</div>
+				</div>
+				<div class="mb-1 row">
+					<label for="colFormLabel" class="col-sm-3 col-form-label">SOCKS5 ( IP:PORT )</label>
+					<div class="col-sm-9">
+						<input type="text" id="ListeSocks5" class="form-control" id="colFormLabel" value="Yükleniyor..." readonly>
+					</div>
+				</div>
+
+
+			</div>
+		</div>
+	</div>
+	<div class="col-md-3">
+		<div class="card">
+			<div class="card-header">
+				<h4 class="card-title">API Kullanım Detayları</h4>
+			</div>
+			<div class="card-body">
+				<div class="mb-1 row">
+					<span style="color:#7367f0;font-weight:bold;">API linkleri parantez içinde belirtilen formatta geri dönüş verisi sağlamaktadır.<br /><br />GET isteği ile listeye erişebilirsiniz.</span>
+				</div>
+
+
+			</div>
+		</div>
+	</div>
+</div>
+
+@section scripts{
+	<script>
+	$(document).ready(function(){
+		$.get( "@Url.Action("GetApiUrls", "Api")", function( data ) {
+			$("#ListeAll").val(decodeURIComponent(data.all))
+			$("#ListeHttp").val(decodeURIComponent(data.http))
+			$("#ListeSocks4").val(decodeURIComponent(data.socks4))
+			$("#ListeSocks5").val(decodeURIComponent(data.socks5))
+		});
+	})
+	</script>
+}

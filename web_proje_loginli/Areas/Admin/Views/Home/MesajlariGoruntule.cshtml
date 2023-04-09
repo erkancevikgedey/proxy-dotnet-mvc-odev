@@ -1,0 +1,170 @@
+﻿@{
+	ViewData["Title"] = "Admin - Mesajları Görüntüle";
+}
+<div class="row match-height">
+	<div class="col-xl-12 col-md-6 col-12">
+		<div class="card">
+			<div class="card-header">
+				<h4 class="card-title">Kullanıcı İletişim Mesajları</h4>
+			</div>
+
+			<table id="example" class="display" style="width:100%; text-align: center; margin-bottom:50px">
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>Email</th>
+						<th>Mesaj</th>
+						<th>Zaman</th>
+						<th>İşlemler</th>
+					</tr>
+				</thead>
+			</table>
+			<div class="card-body">
+			</div>
+		</div>
+	</div>
+</div>
+
+@section scripts{
+	<script>
+		function basari(mesaj) {
+			Swal.fire({
+				icon: 'success',
+				text: mesaj,
+				showCloseButton: true,
+				focusConfirm: false,
+				buttonsStyling: false,
+				customClass: {
+					confirmButton: 'btn btn-success'
+				}
+			});
+		}
+
+		function hata(mesaj) {
+			Swal.fire({
+				text: mesaj,
+				icon: 'error',
+				showCloseButton: true,
+				focusConfirm: false,
+				buttonsStyling: false,
+				customClass: {
+					confirmButton: 'btn btn-danger'
+				}
+			});
+		}
+
+		function TarihCevir(tarih) {
+			var dateStr = JSON.parse('"'+tarih+'"');
+			var date = new Date(dateStr);
+			return date.toLocaleString('tr-TR');
+		}
+
+		function sil(id) { // id geliyor
+			Swal.fire({
+				title: 'Emin misiniz?',
+				text: "Geri dönüşü olmayacak!",
+				icon: 'warning',
+				showCancelButton: true,
+				cancelButtonText: "Silme",
+				confirmButtonText: 'Evet, sil!',
+				customClass: {
+					confirmButton: 'btn btn-primary',
+					cancelButton: 'btn btn-outline-danger ms-1'
+				},
+				buttonsStyling: false
+			}).then(function(result) {
+				if (result.value) {
+					$.ajax({
+						url: "@Url.Action("MesajSil", "Api", new{Area="Admin"})",
+						type: 'post',
+						data: { Id: id }
+					}).done(function(r) {
+						if (r.error) {
+							hata(r.error);
+						} else {
+							basari(r.success);
+							$('#example').DataTable().ajax.reload();
+						}
+					}
+					);
+				} else if (result.dismiss === Swal.DismissReason.cancel) {
+					hata('Silinmedi');
+				}
+			});
+		}
+
+
+
+		function goruntule(id) { // id geliyor
+			$.ajax({
+				url: "@Url.Action("MesajGoruntule", "Api", new{Area="Admin"})",
+				type: 'post',
+				data: { Id: id }
+			}).done(function(r) {
+				if (r.error) {
+					hata(r.error);
+				} else {
+                    var zaman = TarihCevir(r.time);
+					Swal.fire({
+						html: '<div class="user-details d-flex justify-content-between align-items-center flex-wrap"><div class="mail-items"><div class="email-info-dropup dropdown"> <span role="button" class="dropdown-toggle font-small-3" id="card_top01" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' + r.email + '</span> <div class="dropdown-menu" aria-labelledby="card_top01" style="width: 385px;"> <table class="table table-sm table-borderless"> <tbody> <tr> <td class="text-end">Kimden:</td> <td>' + r.email + '</td> </tr><tr> <td class="text-end">Zaman:</td> <td>' + zaman + '</td> </tr> </tbody> </table> </div> </div> </div> </div> <div class="mail-meta-item d-flex align-items-center"> <small class="mail-date-time text-muted">' + zaman + '</small> </div><div class="card-body mail-message-wrapper pt-2" style="text-align: left;"> <div class="mail-message"> <p class="card-text">' + r.message + '</p> </div> </div><button id="test1" onclick="gonder(\'' + r.email + '\')" class="btn btn-success" type="button" style="margin-right:15px;">Mail Adresi ( Varsayılan )</button>',
+						showCloseButton: true,
+						showConfirmButton: false,
+						focusConfirm: false,
+						buttonsStyling: false
+					});
+				}
+			}
+			);
+
+
+		}
+
+		function gonder(mail) {
+			window.location = "mailto:" + mail;
+		}
+
+
+		$(document).ready(function() {
+
+			var table = $('#example').DataTable({
+				"ajax": {
+					"url": "@Url.Action("GetMesajlar", "Api", new{Area="Admin"})",
+					"dataSrc": "",
+					"type": 'POST',
+				},
+				"columns": [
+					{ data: "messageId" },
+					{ data: "email" },
+					{ data: function(data) {
+									return data.message.substr(0,25)+"..."
+							}
+					},
+					{ data: function(data) {
+									return TarihCevir(data.time)
+							}
+					},
+					{
+						data: "messageId", render: function(data, type, row, meta) {
+							return '<button id="test1" onclick="goruntule(\'' + data + '\')" class="btn btn-warning" type="button" style="margin-right:15px;">Görüntüle</button><button id="test1" onclick="sil(\'' + data + '\')" class="btn btn-danger" type="button" style="">Sil</button>';
+						}, orderable: false
+					},
+				],
+				language: {
+					lengthMenu: "Tek sayfa _MENU_ adet göster",
+					search: "Ara:",
+					paginate: {
+						previous: '&nbsp;',
+						next: '&nbsp;'
+					},
+					infoEmpty: "Eşleşen mesaj yok",
+					info: "Sayfa: _PAGE_ / _PAGES_",
+					infoFiltered: "(_MAX_ adet mesaj içerisinde)",
+					zeroRecords: "Mesaj yok",
+				},
+				dom: '<"d-flex justify-content-between align-items-center mx-0 row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>t<"d-flex justify-content-between mx-0 row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
+
+
+			});
+		});
+	</script>
+}

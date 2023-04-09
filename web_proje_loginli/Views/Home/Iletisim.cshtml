@@ -1,0 +1,56 @@
+﻿@{
+	ViewData["Title"] = "İletişim Sayfası";
+}
+
+@model IletisimInput
+
+<div class="row match-height">
+
+	<div class="col-xl-12 col-md-6 col-12">
+		<div class="card">
+			<div class="card-header">
+				<h4 class="card-title">İletişim</h4>
+			</div>
+			<div class="card-body">
+				<div class="mb-1">
+					<form asp-controller="Home" asp-action="Iletisim" method="post">
+						@{
+							if (ViewBag.BasariMesaji != null)
+							{
+										<div>
+											<span style="color:limegreen;font-weight:bold;">
+												@ViewBag.BasariMesaji
+											</span>
+										</div>
+							}
+							else
+							{
+
+										<div class="col-md-12">
+											<div class="mb-1">
+												<label class="form-label" asp-for="MesajMail">Email Adresiniz:</label>
+												<input type="email" class="form-control" id="MesajMail" name="MesajMail" placeholder="Mail Adresiniz" asp-for="MesajMail" required>
+												<span style="color:cyan;font-weight:bold;" asp-validation-for="MesajMail"></span>
+											</div>
+										</div>
+										<div class="col-md-12">
+											<div class="mb-1">
+												<label class="d-block form-label" asp-for="MesajIcerik">Mesajınız:</label>
+												<textarea class="form-control" id="MesajIcerik" name="MesajIcerik" rows="3" style="height: 127px;" placeholder="Mail Adresiniz" asp-for="MesajIcerik" required></textarea>
+												<span style="color:cyan;font-weight:bold;" asp-validation-for="MesajIcerik"></span>
+
+											</div>
+										</div>
+
+										<div class="col text-center">
+											<button type="submit" class="btn btn-primary waves-effect waves-float waves-light">Gönder</button>
+										</div>
+							}
+						}
+					</form>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>

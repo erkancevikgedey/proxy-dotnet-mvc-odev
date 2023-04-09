@@ -1,0 +1,422 @@
+﻿@{
+	ViewData["Title"] = "Admin - Anasayfa";
+}
+<div class="row match-height">
+	<div class="col-lg-3 col-sm-6 col-12">
+		<div class="card">
+			<div class="card-header">
+				<div>
+					<h2 class="fw-bolder mb-0"><span id="sonBotCalismaVakti">-</span> saat önce</h2>
+					<p class="card-text">Son Bot Çalışma Vakti</p>
+				</div>
+				<div class="avatar bg-light-info p-50 m-0">
+					<div class="avatar-content">
+						<i data-feather='cloud'></i>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-3 col-sm-6 col-12">
+		<div class="card">
+			<div class="card-header">
+				<div>
+					<h2 class="fw-bolder mb-0"><span id="sonCheckerCalismaVakti">-</span> saat önce</h2>
+					<p class="card-text">Son Checker Çalışma Vakti</p>
+				</div>
+				<div class="avatar bg-light-info p-50 m-0">
+					<div class="avatar-content">
+						<i data-feather='check'></i>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-3 col-sm-6 col-12">
+		<div class="card">
+			<div class="card-header">
+				<div>
+					<h2 class="fw-bolder mb-0"><span id="veriCekilecekSiteSayisi">-</span> adet</h2>
+					<p class="card-text">Veri Çekilecek Site Sayısı</p>
+				</div>
+				<div class="avatar bg-light-danger p-50 m-0">
+					<div class="avatar-content">
+						<i data-feather='crosshair'></i>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-3 col-sm-6 col-12">
+		<div class="card">
+			<div class="card-header">
+				<div>
+					<h2 class="fw-bolder mb-0"><span id="iletisimMesajSayisi">-</span> adet</h2>
+					<p class="card-text">İletişim Mesaj Sayısı</p>
+				</div>
+				<div class="avatar bg-light-warning p-50 m-0">
+					<div class="avatar-content">
+						<i data-feather='message-square'></i>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row match-height">
+	<div class="col-xl-12 col-md-6 col-12">
+		<div class="card card-statistics">
+			<div class="card-header">
+				<h4 class="card-title">İstatistik</h4>
+				<div class="d-flex align-items-center">
+					<p class="card-text font-small-2 me-25 mb-0">Son eklenen proxy: <span id="sonGuncelleme">-</span> saat önce</p>
+				</div>
+			</div>
+			<div class="card-body statistics-body">
+				<div class="row">
+					<div class="col-xl-3 col-sm-6 col-12 mb-2 mb-xl-0">
+						<div class="d-flex flex-row">
+							<div class="avatar bg-light-primary me-2">
+								<div class="avatar-content">
+									<i data-feather="trending-up" class="avatar-icon"></i>
+								</div>
+							</div>
+							<div class="my-auto">
+								<h4 class="fw-bolder mb-0" id="toplamAdet">- adet</h4>
+								<p class="card-text font-small-3 mb-0">Aktif Proxy Adet</p>
+							</div>
+						</div>
+					</div>
+					<div class="col-xl-3 col-sm-6 col-12 mb-2 mb-xl-0">
+						<div class="d-flex flex-row">
+							<div class="avatar bg-light-info me-2">
+								<div class="avatar-content">
+									<i data-feather="key" class="avatar-icon"></i>
+								</div>
+							</div>
+							<div class="my-auto">
+								<h4 class="fw-bolder mb-0" id="httpAdet">- adet</h4>
+								<p class="card-text font-small-3 mb-0">HTTP/s Proxy Adet</p>
+							</div>
+						</div>
+					</div>
+					<div class="col-xl-3 col-sm-6 col-12 mb-2 mb-sm-0">
+						<div class="d-flex flex-row">
+							<div class="avatar bg-light-success me-2">
+								<div class="avatar-content">
+									<i data-feather="key" class="avatar-icon"></i>
+								</div>
+							</div>
+							<div class="my-auto">
+								<h4 class="fw-bolder mb-0" id="socks4Adet">- adet</h4>
+								<p class="card-text font-small-3 mb-0">SOCKS4 Proxy Adet</p>
+							</div>
+						</div>
+					</div>
+					<div class="col-xl-3 col-sm-6 col-12">
+						<div class="d-flex flex-row">
+							<div class="avatar bg-light-danger me-2">
+								<div class="avatar-content">
+									<i data-feather="key" class="avatar-icon"></i>
+								</div>
+							</div>
+							<div class="my-auto">
+								<h4 class="fw-bolder mb-0" id="socks5Adet">- adet</h4>
+								<p class="card-text font-small-3 mb-0">SOCKS5 Proxy Adet</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row match-height">
+	<div class="col-xl-12 col-md-6 col-12">
+		<div class="card">
+			<div class="card-header">
+				<h4 class="card-title">Proxy Listesi</h4>
+				<div class="d-flex align-items-center">
+					<button id="test1" onclick="eklefo()" class="btn btn-success" type="button" style="margin-right:15px;">Proxy Ekle</button>
+				</div>
+			</div>
+
+			<table id="example" class="display" style="width:100%; text-align: center; margin-bottom:50px">
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>Ip</th>
+						<th>Port</th>
+						<th>Ülke</th>
+						<th>Tarih</th>
+						<th>Salary</th>
+					</tr>
+				</thead>
+			</table>
+			<div class="card-body">
+			</div>
+		</div>
+	</div>
+</div>
+
+
+@section scripts{
+	<script>
+		function basari(mesaj) {
+			Swal.fire({
+				icon: 'success',
+				text: mesaj,
+				showCloseButton: true,
+				focusConfirm: false,
+				buttonsStyling: false,
+				customClass: {
+					confirmButton: 'btn btn-success'
+				}
+			});
+		}
+
+		function hata(mesaj) {
+			Swal.fire({
+				text: mesaj,
+				icon: 'error',
+				showCloseButton: true,
+				focusConfirm: false,
+				buttonsStyling: false,
+				customClass: {
+					confirmButton: 'btn btn-danger'
+				}
+			});
+		}
+
+		function eklefo() {
+			var selectlerTur = " ";
+			var selectlerUlke = " ";
+			$.ajax({
+				url: "@Url.Action("GetTurler", "Api", new{Area="Admin"})",
+				type: 'post'
+			}).done(function(r) {
+				r.forEach(function(element) {
+					veri = '<option value="' + element.proxyTypeId + '">' + element.type + '</option>';
+					selectlerTur = selectlerTur + veri;
+				});
+				$.ajax({
+					url: "@Url.Action("GetUlkeler", "Api", new{Area="Admin"})",
+					type: 'post'
+				}).done(function(r) {
+					r.forEach(function(element) {
+						veri = '<option value="' + element.countryId + '">' + element.countryName + '</option>';
+						selectlerUlke = selectlerUlke + veri;
+					});
+
+					Swal.fire({
+						html: '<div style="margin:50px"><div class="mb-1 row"><label for="colFormLabel" class="col-sm-3 col-form-label">Ip</label><div class="col-sm-9"><input type="text" class="form-control" id="proxyGuncelleIp" placeholder="Ip Adresini Giriniz" /></div></div><div class="mb-1 row"><label for="colFormLabel" class="col-sm-3 col-form-label">Port</label><div class="col-sm-9"><input type="text" class="form-control" id="proxyGuncellePort" placeholder="Port Giriniz" /></div></div><div class="mb-1 row"><label for="colFormLabel" class="col-sm-3 col-form-label">Ülke</label><div class="col-sm-9"><select class="form-select" id="proxyGuncelleSecimUlke">' + selectlerUlke + '</select></div></div><div class="mb-1 row"><label for="colFormLabel" class="col-sm-3 col-form-label">Proxy Türü</label><div class="col-sm-9"><select class="form-select" id="proxyGuncelleSecimTur">' + selectlerTur + '</select></div></div><button class="btn btn-primary" type="submit" onclick="onay()">Ekle</button></div>', showCloseButton: true,
+						showConfirmButton: false,
+						focusConfirm: false,
+						buttonsStyling: false
+					});
+				}
+				);
+			}
+			);
+
+		}
+
+		function onay() {
+			var proxyGuncelleIp = $("#proxyGuncelleIp").val();
+			var proxyGuncellePort = $("#proxyGuncellePort").val();
+			var proxyGuncelleSecimUlke = $("#proxyGuncelleSecimUlke").val();
+			var proxyGuncelleSecimTur = $("#proxyGuncelleSecimTur").val();
+            if (!proxyGuncelleIp || !proxyGuncellePort || !proxyGuncelleSecimUlke || !proxyGuncelleSecimTur) {
+                hata("Veriler boş bırakılamaz");
+            } else {
+				Swal.fire({
+					title: 'Emin misiniz?',
+					text: `Yeni ${proxyGuncelleIp}:${proxyGuncellePort} olarak bir proxy ekliyorsunuz!`,
+					icon: 'warning',
+					showCancelButton: true,
+					cancelButtonText: "Ekleme",
+					confirmButtonText: 'Evet, ekle!',
+					customClass: {
+						confirmButton: 'btn btn-primary',
+						cancelButton: 'btn btn-outline-danger ms-1'
+					},
+					buttonsStyling: false
+				}).then(function(result) {
+					if (result.value) {
+						$.ajax({
+							url: "@Url.Action("ProxyEkle", "Api", new{Area="Admin"})",
+							type: 'post',
+							data: { IpAddress: proxyGuncelleIp, Port: proxyGuncellePort, CountryId: proxyGuncelleSecimUlke, ProxyTypeId:  proxyGuncelleSecimTur}
+						}).done(function(r) {
+							if (r.error) {
+								hata(r.error);
+							} else {
+								basari(r.success);
+								$('#example').DataTable().ajax.reload();
+							}
+						}
+						);
+					} else if (result.dismiss === Swal.DismissReason.cancel) {
+						hata('Eklenmedi');
+					}
+				});
+			}
+		}
+
+		function sil(id) { // id geliyor
+			Swal.fire({
+				title: 'Emin misiniz?',
+				text: "Geri dönüşü olmayacak!",
+				icon: 'warning',
+				showCancelButton: true,
+				cancelButtonText: "Silme",
+				confirmButtonText: 'Evet, sil!',
+				customClass: {
+					confirmButton: 'btn btn-primary',
+					cancelButton: 'btn btn-outline-danger ms-1'
+				},
+				buttonsStyling: false
+			}).then(function(result) {
+				if (result.value) {
+					$.ajax({
+						url: "@Url.Action("ProxySil", "Api", new{Area="Admin"})",
+						type: 'post',
+						data: { Id: id }
+					}).done(function(r) {
+						if (r.error) {
+							hata(r.error);
+						} else {
+							basari(r.success);
+							$('#example').DataTable().ajax.reload();
+						}
+					}
+					);
+
+				} else if (result.dismiss === Swal.DismissReason.cancel) {
+					hata('Silinmedi');
+				}
+			});
+		}
+
+		function DuzenleOnay(id) {
+			var proxyGuncelleIp = $("#proxyGuncelleIp").val();
+			var proxyGuncellePort = $("#proxyGuncellePort").val();
+			var proxyGuncelleSecimUlke = $("#proxyGuncelleSecimUlke").val();
+			var proxyGuncelleSecimTur = $("#proxyGuncelleSecimTur").val();
+			$.ajax({
+				url: "@Url.Action("ProxyDuzenle", "Api", new{Area="Admin"})",
+				type: 'post',
+				data: { Id: id, IpAddress: proxyGuncelleIp, Port: proxyGuncellePort, CountryId: proxyGuncelleSecimUlke, ProxyTypeId: proxyGuncelleSecimTur }
+			}).done(function(r) {
+				if (r.error) {
+					hata(r.error);
+				} else {
+					basari(r.success);
+					$('#example').DataTable().ajax.reload();
+				}
+			}
+			);
+		}
+
+		function duzenle(id) { // id geliyor
+			var selectlerTur = " "; // optionlardan oluşan html variableımız
+			var selectlerUlke = " ";
+			$.ajax({
+				url: "@Url.Action("GetTurler", "Api", new{Area="Admin"})",
+				type: 'post'
+			}).done(function(r) {
+				r.forEach(function(element) {
+					veri = '<option value="' + element.proxyTypeId + '">' + element.type + '</option>';
+					selectlerTur = selectlerTur + veri;
+				});
+				$.ajax({
+					url: "@Url.Action("GetUlkeler", "Api", new{Area="Admin"})",
+					type: 'post'
+				}).done(function(r) {
+					r.forEach(function(element) {
+						veri = '<option value="' + element.countryId + '">' + element.countryName + '</option>';
+						selectlerUlke = selectlerUlke + veri;
+					});
+					$.ajax({
+						url: "@Url.Action("GetProxyDetay", "Api", new{Area="Admin"})",
+						type: 'post',
+						data: { Id: id }
+					}).done(function(r) {
+						Swal.fire({
+							html: '<div style="margin:50px"><div class="mb-1 row"><label for="colFormLabel" class="col-sm-3 col-form-label">Ip</label><div class="col-sm-9"><input type="text" class="form-control" id="proxyGuncelleIp" placeholder="Normal Input" /></div></div><div class="mb-1 row"><label for="colFormLabel" class="col-sm-3 col-form-label">Port</label><div class="col-sm-9"><input type="text" class="form-control" id="proxyGuncellePort" placeholder="Normal Input" /></div></div><div class="mb-1 row"><label for="colFormLabel" class="col-sm-3 col-form-label">Ülke</label><div class="col-sm-9"><select class="form-select" id="proxyGuncelleSecimUlke">' + selectlerUlke + '</select></div></div><div class="mb-1 row"><label for="colFormLabel" class="col-sm-3 col-form-label">Proxy Türü</label><div class="col-sm-9"><select class="form-select" id="proxyGuncelleSecimTur">' + selectlerTur + '</select></div></div><button class="btn btn-primary" type="submit" onclick="DuzenleOnay(\'' + id + '\')">Kaydet</button></div>',
+							showCloseButton: true,
+							showConfirmButton: false,
+							focusConfirm: false,
+							buttonsStyling: false
+						});
+						$("#proxyGuncelleIp").val(r.ipAddress);
+						$("#proxyGuncellePort").val(r.port);
+						$("#proxyGuncelleSecimUlke").val(r.country.countryId);
+						$("#proxyGuncelleSecimTur").val(r.proxyType.proxyTypeId);
+					}
+					);
+				}
+				);
+			}
+			);
+
+
+		}
+
+		var ekle = " Adet";
+
+		$(document).ready(function() {
+
+			$.get( "@Url.Action("getSayilar", "Api", new { Area = "" })", function( data ) {
+			$("#toplamAdet").html(data.toplam+ekle)
+			$("#httpAdet").html(data.httpSayisi+ekle)
+			$("#socks4Adet").html(data.socks4Sayisi+ekle)
+			$("#socks5Adet").html(data.socks5Sayisi+ekle)
+			$("#sonGuncelleme").html(data.sonGuncelleme)
+			});
+
+			$.get( "@Url.Action("GetAnasayfaSayisalVeriler", "Api", new { Area = "Admin" })", function( data ) {
+			$("#sonBotCalismaVakti").html(data.kacSaatOnceProxyEklendi)
+			$("#sonCheckerCalismaVakti").html(data.kacSaatOnceCheckerCalisti)
+			$("#veriCekilecekSiteSayisi").html(data.kacAdetVeriBotSitesi)
+			$("#iletisimMesajSayisi").html(data.kacAdetMesaj+ekle)
+			});
+
+			var table = $('#example').DataTable({
+				"ajax": {
+					"url": "@Url.Action("GetProxyler", "Api", new { Area = "Admin" })",
+					"dataSrc": "",
+					"type": "POST"
+				},
+				"columns": [
+					{ data: "proxyId" },
+					{ data: "ipAddress" },
+					{ data: "port" },
+					{ data: "country.countryName" },
+					{ data: "proxyType.type" },
+					{
+						data: "proxyId", render: function(data, type, row, meta) {
+							return '<button id="test1" onclick="duzenle(\'' + data + '\')" class="btn btn-warning" type="button" style="margin-right:15px;">Düzenle</button><button id="test1" onclick="sil(\'' + data + '\')" class="btn btn-danger" type="button" style="">Sil</button>';
+						}, orderable: false
+					},
+				],
+				language: {
+					lengthMenu: "Tek sayfa _MENU_ adet göster",
+					search: "Ara:",
+					paginate: {
+						previous: '&nbsp;',
+						next: '&nbsp;'
+					},
+					infoEmpty: "Eşleşen proxy yok",
+					info: "Sayfa: _PAGE_ / _PAGES_",
+					infoFiltered: "(_MAX_ adet proxy içerisinde)",
+					zeroRecords: "Proxy yok",
+				},
+				dom: '<"d-flex justify-content-between align-items-center mx-0 row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>t<"d-flex justify-content-between mx-0 row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
+
+
+			});
+		});
+	</script>
+}

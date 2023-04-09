@@ -1,0 +1,214 @@
+﻿@{
+	ViewData["Title"] = "Admin - Ülke Listesi";
+}
+<div class="row match-height">
+				<div class="col-xl-12 col-md-6 col-12">
+				<div class="card">
+				<div class="card-header">
+								<h4 class="card-title">Ülke Listesi</h4>
+								<div class="d-flex align-items-center">
+									<button id="test1" onclick="ekle()" class="btn btn-success" type="button" style="margin-right:15px;">Ülke Ekle</button>
+								</div>
+				</div>
+				
+				<table id="example" class="display" style="width:100%; text-align: center; margin-bottom:50px">
+					<thead>
+						<tr>
+							<th>Id</th>
+									<th>Ülke Adı</th>
+									<th>İşlemler</th>
+						</tr>
+					</thead>
+				</table>
+				<div class="card-body">
+				</div>
+				</div>
+				</div>
+				</div>
+         @section scripts{
+			 <script>
+		function ekle(){
+			Swal.fire({
+				html: '<div style="margin:50px"><div class="mb-1 row"><label for="colFormLabel" class="col-sm-3 col-form-label">Ülke Adı</label><div class="col-sm-9"><input type="text" class="form-control" id="ulkeEklenecek" placeholder="Ülke Adını Giriniz" /></div></div><button class="btn btn-primary" type="submit" onclick="onay()">Ekle</button></div>',
+				showCloseButton: true,
+				showConfirmButton: false,
+				focusConfirm: false,
+				buttonsStyling: false
+			  });
+		}
+
+		function onay() {
+            var eklenecekUlkeAdi = $("#ulkeEklenecek").val();
+			Swal.fire({
+			title: 'Emin misiniz?',
+			text: `Yeni "${eklenecekUlkeAdi}" adında bir ülke ekliyorsunuz!`,
+			icon: 'warning',
+			showCancelButton: true,
+			cancelButtonText: "Ekleme",
+			confirmButtonText: 'Evet, ekle!',
+			customClass: {
+			  confirmButton: 'btn btn-primary',
+			  cancelButton: 'btn btn-outline-danger ms-1'
+			},
+			buttonsStyling: false
+		  }).then(function (result) {
+			if (result.value) {
+				$.ajax({
+					url: "@Url.Action("UlkeEkle", "Api", new{Area="Admin"})",
+					type: 'post',
+					data: { UlkeAdi: eklenecekUlkeAdi }
+				}).done(function(r) {
+					if (r.error) {
+						hata(r.error);
+					} else {
+                        basari(r.success);
+						$('#example').DataTable().ajax.reload();
+					}
+				}
+				);
+			} else if (result.dismiss === Swal.DismissReason.cancel) {
+				hata('Eklenmedi');
+			}
+		  });
+		}
+
+		function basari(mesaj){
+			Swal.fire({
+				icon: 'success',
+				text: mesaj,
+				showCloseButton: true,
+				focusConfirm: false,
+				buttonsStyling: false,
+				customClass: {
+				  confirmButton: 'btn btn-success'
+				}
+			  });
+		}
+		
+		function hata(mesaj){
+			Swal.fire({
+				text: mesaj,
+				icon: 'error',
+				showCloseButton: true,
+				focusConfirm: false,
+				buttonsStyling: false,
+				customClass: {
+				  confirmButton: 'btn btn-danger'
+				}
+			  });
+		}
+		
+		
+		function sil(id){ // id geliyor
+			Swal.fire({
+			title: 'Emin misiniz?',
+			text: "Geri dönüşü olmayacak!",
+			icon: 'warning',
+			showCancelButton: true,
+			cancelButtonText: "Silme",
+			confirmButtonText: 'Evet, sil!',
+			customClass: {
+			  confirmButton: 'btn btn-primary',
+			  cancelButton: 'btn btn-outline-danger ms-1'
+			},
+			buttonsStyling: false
+		  }).then(function (result) {
+			if (result.value) {
+                silGonder(id);
+			} else if (result.dismiss === Swal.DismissReason.cancel) {
+			  hata('Eklenmedi');
+			}
+		  });
+		}
+		
+		function silGonder(id) {
+			//basari('Başarıyla silindi');
+			$.ajax({
+					url: "@Url.Action("UlkeSil", "Api", new{Area="Admin"})",
+					type: 'post',
+					data: {Id: id}
+				}).done(function(r) {
+					if (r.error) {
+						hata(r.error);
+					} else {
+                        basari(r.success);
+						$('#example').DataTable().ajax.reload();
+					}
+				}
+				);
+		}
+		
+		
+		function duzenle(id){ // id geliyor
+			$.ajax({
+						url: "@Url.Action("GetUlkeDetay", "Api", new{Area="Admin"})",
+						type: 'post',
+						data: { Id: id }
+					}).done(function(r) {
+						Swal.fire({
+						html: '<div style="margin:50px"><div class="mb-1 row"><label for="colFormLabel" class="col-sm-3 col-form-label">Ülke Adı</label><div class="col-sm-9"><input type="text" class="form-control" id="ulkeAdiDuzenle" value="'+r.countryName+'"></div></div><button class="btn btn-primary" type="submit" onclick="duzenleKaydet(\''+id+'\')">Kaydet</button></div>',				showCloseButton: true,
+							showConfirmButton: false,
+							focusConfirm: false,
+							buttonsStyling: false
+						  });
+						$("#proxyGuncelleIp").val(r.ipAddress);
+						$("#proxyGuncellePort").val(r.port);
+						$("#proxyGuncelleSecimUlke").val(r.country.countryId);
+						$("#proxyGuncelleSecimTur").val(r.proxyType.proxyTypeId);
+					}
+					);
+			
+		}
+		
+		function duzenleKaydet(id) {
+            var duzenlenmisUlkeAdi = $("#ulkeAdiDuzenle").val();
+			$.ajax({
+					url: "@Url.Action("UlkeDuzenle", "Api", new{Area="Admin"})",
+					type: 'post',
+					data: {Id: id,DuzenlenmisAd: duzenlenmisUlkeAdi }
+				}).done(function(r) {
+					if (r.error) {
+						hata(r.error);
+					} else {
+                        basari(r.success);
+						$('#example').DataTable().ajax.reload();
+					}
+				}
+				);
+		}
+  
+		$(document).ready(function () {
+
+			var table = $('#example').DataTable( {
+			"ajax": {
+				"url": "@Url.Action("GetUlkeler", "Api", new{Area="Admin"})",
+				"dataSrc": "",
+				"type": 'POST',
+			},
+			"columns": [
+				{data: "countryId" },
+				{data: "countryName" },
+				{data: "countryId" , render : function ( data, type, row, meta ) {
+				  return '<button id="test1" onclick="duzenle(\''+data+'\')" class="btn btn-warning" type="button" style="margin-right:15px;">Düzenle</button><button id="test1" onclick="sil(\''+data+'\')" class="btn btn-danger" type="button" style="">Sil</button>';
+				}, orderable: false},
+			],
+			language: {
+				lengthMenu: "Tek sayfa _MENU_ adet göster",
+				search: "Ara:",
+				 paginate: {
+				  previous: '&nbsp;',
+				  next: '&nbsp;'
+				},
+				infoEmpty: "Eşleşen proxy yok",
+				info: "Sayfa: _PAGE_ / _PAGES_",
+				infoFiltered: "(_MAX_ adet proxy içerisinde)",
+				zeroRecords: "Proxy yok",
+			},
+			dom: '<"d-flex justify-content-between align-items-center mx-0 row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>t<"d-flex justify-content-between mx-0 row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
+
+
+			} );
+		});
+	</script>
+
+		 }

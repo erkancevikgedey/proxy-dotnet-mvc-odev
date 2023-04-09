@@ -1,0 +1,186 @@
+﻿@{
+	ViewData["Title"] = "Admin - Bekleyen Proxyler";
+}
+<div class="row match-height">
+	<div class="col-xl-12 col-md-6 col-12">
+		<div class="card">
+			<div class="card-header">
+				<h4 class="card-title">Bekleyen Proxy Listesi</h4>
+			</div>
+
+			<table id="example" class="display" style="width:100%; text-align: center; margin-bottom:50px">
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>Proxy</th>
+						<th>Port</th>
+						<th>Tür</th>
+						<th>Check Zamanı</th>
+						<th>İşlemler</th>
+					</tr>
+				</thead>
+			</table>
+			<div class="card-body">
+			</div>
+		</div>
+	</div>
+</div>
+
+@section scripts{
+	<script>
+		function basari(mesaj) {
+			Swal.fire({
+				icon: 'success',
+				text: mesaj,
+				showCloseButton: true,
+				focusConfirm: false,
+				buttonsStyling: false,
+				customClass: {
+					confirmButton: 'btn btn-success'
+				}
+			});
+		}
+
+		function hata(mesaj) {
+			Swal.fire({
+				text: mesaj,
+				icon: 'error',
+				showCloseButton: true,
+				focusConfirm: false,
+				buttonsStyling: false,
+				customClass: {
+					confirmButton: 'btn btn-danger'
+				}
+			});
+		}
+
+		function TarihCevir(tarih) {
+			var dateStr = JSON.parse('"'+tarih+'"');
+			var date = new Date(dateStr);
+			return date.toLocaleString('tr-TR');
+		}
+
+		function sil(id) { // id geliyor
+			Swal.fire({
+				title: 'Emin misiniz?',
+				text: "Geri dönüşü olmayacak!",
+				icon: 'warning',
+				showCancelButton: true,
+				cancelButtonText: "Silme",
+				confirmButtonText: 'Evet, sil!',
+				customClass: {
+					confirmButton: 'btn btn-primary',
+					cancelButton: 'btn btn-outline-danger ms-1'
+				},
+				buttonsStyling: false
+			}).then(function(result) {
+				if (result.value) {
+					$.ajax({
+						url: "@Url.Action("BekleyenProxySil", "Api", new{Area="Admin"})",
+						type: 'post',
+						data: { Id: id }
+					}).done(function(r) {
+						if (r.error) {
+							hata(r.error);
+						} else {
+							basari(r.success);
+							$('#example').DataTable().ajax.reload();
+						}
+					}
+					);
+				} else if (result.dismiss === Swal.DismissReason.cancel) {
+					hata('Silinmedi');
+				}
+			});
+		}
+
+		function onayla(id) { // id geliyor
+			Swal.fire({
+				title: 'Emin misiniz?',
+				text: "Geri dönüşü olmayacak!",
+				icon: 'warning',
+				showCancelButton: true,
+				cancelButtonText: "Onaylama",
+				confirmButtonText: 'Evet, onayla!',
+				customClass: {
+					confirmButton: 'btn btn-primary',
+					cancelButton: 'btn btn-outline-danger ms-1'
+				},
+				buttonsStyling: false
+			}).then(function(result) {
+				if (result.value) {
+					$.ajax({
+						url: "@Url.Action("BekleyenProxyOnayla", "Api", new{Area="Admin"})",
+						type: 'post',
+						data: { Id: id }
+					}).done(function(r) {
+						if (r.error) {
+							hata(r.error);
+						} else {
+							basari(r.success);
+							$('#example').DataTable().ajax.reload();
+						}
+					}
+					);
+				} else if (result.dismiss === Swal.DismissReason.cancel) {
+					hata('Onaylanmadı');
+				}
+			});
+		}
+
+		function getTur(veri) {
+            if (veri == 1) {
+                return "Http/s"
+            } else if (veri == 2) {
+                return "Socks4"
+            } else if (veri == 3) {
+                return "Socks5"
+            } else {
+				return "Tanımsız!"
+			}
+		}
+
+		$(document).ready(function() {
+
+			var table = $('#example').DataTable({
+				"ajax": {
+					"url": "@Url.Action("GetBeklenProxyler", "Api", new{Area="Admin"})",
+					"dataSrc": "",
+					"type": 'POST',
+				},
+				"columns": [
+					{ data: "checkId" },
+					{ data: "ipAddress" },
+					{ data: "port" },
+					{ data: function(data) {
+                        return getTur(data.proxyTypeId)
+					}},
+                    {
+                        data: function(data) {
+                            return TarihCevir(data.checkTime)
+                        }
+                    },
+					{ data: "checkId", render: function(data, type, row, meta) {
+							return '<button id="test1" onclick="onayla(\'' + data + '\')" class="btn btn-warning" type="button" style="margin-right:15px;">Onayla</button><button id="test1" onclick="sil(\'' + data + '\')" class="btn btn-danger" type="button" style="">Sil</button>';
+						}, orderable: false
+					},
+				],
+				language: {
+					lengthMenu: "Tek sayfa _MENU_ adet göster",
+					search: "Ara:",
+					paginate: {
+						previous: '&nbsp;',
+						next: '&nbsp;'
+					},
+					infoEmpty: "Eşleşen proxy yok",
+					info: "Sayfa: _PAGE_ / _PAGES_",
+					infoFiltered: "(_MAX_ adet proxy içerisinde)",
+					zeroRecords: "Proxy yok",
+				},
+				dom: '<"d-flex justify-content-between align-items-center mx-0 row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>t<"d-flex justify-content-between mx-0 row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
+
+
+			});
+		});
+	</script>
+				}

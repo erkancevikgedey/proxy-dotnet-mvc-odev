@@ -1,0 +1,317 @@
+﻿@{
+	ViewData["Title"] = "Admin - Veri Çekme Botu";
+}
+<div class="row match-height">
+	<div class="col-lg-6 col-sm-6 col-12">
+		<div class="card">
+			<div class="card-header">
+				<div>
+					<h2 class="fw-bolder mb-0"><span id="sonBotCalismaVakti">-</span> saat önce</h2>
+					<p class="card-text">Son Bot Çalışma Vakti</p>
+				</div>
+				<div class="avatar bg-light-info p-50 m-0">
+					<div class="avatar-content">
+						<i data-feather='cloud'></i>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-6 col-sm-6 col-12">
+		<div class="card">
+			<div class="card-header">
+				<div>
+					<h2 class="fw-bolder mb-0"><span id="veriCekilecekSiteSayisi">- </span> adet</h2>
+					<p class="card-text">Veri Çekilecek Site Sayısı</p>
+				</div>
+				<div class="avatar bg-light-danger p-50 m-0">
+					<div class="avatar-content">
+						<i data-feather='crosshair'></i>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row match-height">
+	<div class="col-lg-6 col-sm-12 col-12">
+		<div class="card">
+			<div class="card-header">
+				Bu sayfadan otomatik olarak diğer sayfalardan proxyleri çekip sisteme ekleyebilirsiniz. <br />Regex bilgisi gereklidir.
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-6 col-sm-12 col-12">
+		<div class="card">
+			<div class="card-header">
+				<div class="col-6" style="margin-top:10px;">
+					<button type="button" class="btn btn-primary waves-effect waves-float waves-light" style="width: 90%;" onclick="SiteEkle()">
+						<i data-feather="star" class="me-25"></i>
+						<span>Veri Çekilecek Site Ekle</span>
+					</button>
+				</div>
+				<div class="col-6" style="margin-top:10px;">
+					<button type="button" class="btn btn-success waves-effect waves-float waves-light" style="width: 90%;" onclick="BotuCalistir()">
+						<i data-feather="star" class="me-25"></i>
+						<span>Botu Çalıştır</span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+</div>
+
+<div class="row match-height">
+	<div class="col-xl-12 col-md-6 col-12">
+		<div class="card">
+			<div class="card-header">
+				<h4 class="card-title">Veri Çekilecek Siteler Listesi</h4>
+			</div>
+
+			<table id="example" class="display" style="width:100%; text-align: center; margin-bottom:50px;word-break: break-all;">
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>Site Adresi</th>
+						<th>Regex</th>
+						<th>Tür</th>
+						<th>İşlemler</th>
+					</tr>
+				</thead>
+			</table>
+			<div class="card-body">
+			</div>
+		</div>
+	</div>
+</div>
+
+
+@section scripts{
+	<script>
+		function SiteEkle() {
+			var selectlerTur = " ";
+            $.ajax({
+                url: "@Url.Action("GetTurler", "Api", new{Area="Admin"})",
+                type: 'post'
+            }).done(function(r) {
+                r.forEach(function(element) {
+                    veri = '<option value="' + element.proxyTypeId + '">' + element.type + '</option>';
+                    selectlerTur = selectlerTur + veri;
+                });
+
+                Swal.fire({
+                    html: '<div style="margin:50px"><div class="mb-1 row"><label for="colFormLabel" class="col-sm-3 col-form-label">Site Adresi</label><div class="col-sm-9"><input type="text" class="form-control" id="eklenecekSiteAdresi" placeholder="Site Adresini Giriniz" /></div></div><div class="mb-1 row"><label for="colFormLabel" class="col-sm-3 col-form-label">Regex</label><div class="col-sm-9"><input type="text" class="form-control" id="eklenecekRegex" placeholder="Regex giriniz" /></div></div><div class="mb-1 row"><label for="colFormLabel" class="col-sm-3 col-form-label">Tür</label><div class="col-sm-9"><select class="form-select" id="turEklenecekId">' + selectlerTur + '</select></div></div><button class="btn btn-primary" type="submit" onclick="SiteEkleOnay()">Ekle</button></div>',
+                    showCloseButton: true,
+                    showConfirmButton: false,
+                    focusConfirm: false,
+                    buttonsStyling: false
+                });
+            });
+		}
+
+		function SiteEkleOnay() {
+			var eklenecekSite = $("#eklenecekSiteAdresi").val();
+			var eklenecekRegex = $("#eklenecekRegex").val();
+            var eklenecekTur = $("#turEklenecekId").val();
+			$.ajax({
+				url: "@Url.Action("BotSitesiEkle", "Api", new{Area="Admin"})",
+				type: 'post',
+				data: { EklenecekSite: eklenecekSite, EklenecekRegex: eklenecekRegex, EklenecekTurId: eklenecekTur}
+			}).done(function(r) {
+				if (r.error) {
+					hata(r.error);
+				} else {
+					basari(r.success);
+					$('#example').DataTable().ajax.reload();
+				}
+			}
+			);
+		}
+
+		function BotuCalistir() {
+			Swal.fire({
+                    html: '<style> .loader { border: 16px solid #f3f3f3; border-radius: 50%; border-top: 16px solid #7367f0; border-bottom: 16px solid #7367f0; width: 120px; height: 120px; -webkit-animation: spin 2s linear infinite; animation: spin 2s linear infinite; } @@-webkit-keyframes spin { 0% { -webkit-transform: rotate(0deg); } 100% { -webkit-transform: rotate(360deg); } } @@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } } </style><h2>Lütfen Bekleyiniz</h2> <center><div class="loader"></div><br/>Bot arkaplanda çalışıyor, geri dönüş gelecek.</center>',
+                    showCloseButton: false,
+                    showConfirmButton: false,
+					allowOutsideClick: false,
+                    focusConfirm: false,
+                    buttonsStyling: false
+            });
+			$.ajax({
+				url: "@Url.Action("BotCalistir", "Api", new{Area="Admin"})",
+				type: 'post',
+				data: null,
+			}).done(function(r) {
+				if (r.error) {
+					hata(r.error);
+				} else {
+					basari(r.success);
+				}
+			}
+			);
+		}
+
+		function basari(mesaj) {
+			Swal.fire({
+				icon: 'success',
+				text: mesaj,
+				showCloseButton: true,
+				focusConfirm: false,
+				buttonsStyling: false,
+				customClass: {
+					confirmButton: 'btn btn-success'
+				}
+			});
+		}
+
+		function hata(mesaj) {
+			Swal.fire({
+				text: mesaj,
+				icon: 'error',
+				showCloseButton: true,
+				focusConfirm: false,
+				buttonsStyling: false,
+				customClass: {
+					confirmButton: 'btn btn-danger'
+				}
+			});
+		}
+
+
+		function sil(id) { // id geliyor
+			Swal.fire({
+				title: 'Emin misiniz?',
+				text: "Geri dönüşü olmayacak!",
+				icon: 'warning',
+				showCancelButton: true,
+				cancelButtonText: "Silme",
+				confirmButtonText: 'Evet, sil!',
+				customClass: {
+					confirmButton: 'btn btn-primary',
+					cancelButton: 'btn btn-outline-danger ms-1'
+				},
+				buttonsStyling: false
+			}).then(function(result) {
+				if (result.value) {
+					$.ajax({
+						url: "@Url.Action("BotSitesiSil", "Api", new{Area="Admin"})",
+						type: 'post',
+						data: { Id: id }
+					}).done(function(r) {
+						if (r.error) {
+							hata(r.error);
+						} else {
+							basari(r.success);
+							$('#example').DataTable().ajax.reload();
+						}
+					}
+					);
+				} else if (result.dismiss === Swal.DismissReason.cancel) {
+					hata('Silinmedi');
+				}
+			});
+		}
+
+		function duzenle(id) { // id geliyor
+			var selectlerTur = " ";
+            $.ajax({
+                url: "@Url.Action("GetTurler", "Api", new{Area="Admin"})",
+                type: 'post'
+            }).done(function(r) {
+                r.forEach(function(element) {
+                    veri = '<option value="' + element.proxyTypeId + '">' + element.type + '</option>';
+                    selectlerTur = selectlerTur + veri;
+                });
+				
+				$.ajax({
+					url: "@Url.Action("GetBotSitesiDetay", "Api", new{Area="Admin"})",
+					type: 'post',
+					data: { Id: id }
+				}).done(function(r) {
+					Swal.fire({
+						html: '<div style="margin:50px"><div class="mb-1 row"><label for="colFormLabel" class="col-sm-3 col-form-label">Site Adresi</label><div class="col-sm-9"><input type="text" class="form-control" id="duzenlenecekSiteAdresi" /></div></div><div class="mb-1 row"><label for="colFormLabel" class="col-sm-3 col-form-label">Regex</label><div class="col-sm-9"><input type="text" class="form-control" id="duzenlenecekRegex" /></div></div><div class="mb-1 row"><label for="colFormLabel" class="col-sm-3 col-form-label">Tür</label><div class="col-sm-9"><select class="form-select" id="turEklenecekId">' + selectlerTur + '</select></div></div><button class="btn btn-primary" type="submit" onclick="DuzenleOnay(\'' + id + '\')">Kaydet</button></div>',
+						showCloseButton: true,
+						showConfirmButton: false,
+						focusConfirm: false,
+						buttonsStyling: false
+					});
+					$("#duzenlenecekSiteAdresi").val(r.website);
+					$("#duzenlenecekRegex").val(r.regex);
+					$("#turEklenecekId").val(r.proxyTypeId);
+				}
+				);
+            });
+			
+		}
+
+		function DuzenleOnay(id) {
+			var duzenlenecekSiteAdresi = $("#duzenlenecekSiteAdresi").val();
+			var duzenlenecekRegex = $("#duzenlenecekRegex").val();
+			var eklenecekTur = $("#turEklenecekId").val();
+
+			$.ajax({
+				url: "@Url.Action("BotSitesiDuzenle", "Api", new{Area="Admin"})",
+				type: 'post',
+				data: { Id: id, DuzenlenecekSiteAdresi: duzenlenecekSiteAdresi, DuzenlenecekRegex: duzenlenecekRegex, EklenecekTurId: eklenecekTur}
+			}).done(function(r) {
+				if (r.error) {
+					hata(r.error);
+				} else {
+					basari(r.success);
+					$('#example').DataTable().ajax.reload();
+				}
+			}
+			);
+
+		}
+
+		$(document).ready(function() {
+
+			$.get( "@Url.Action("GetAnasayfaSayisalVeriler", "Api", new { Area = "Admin" })", function( data ) {
+			$("#sonBotCalismaVakti").html(data.kacSaatOnceCheckerCalisti)
+			$("#veriCekilecekSiteSayisi").html(data.kacAdetVeriBotSitesi)
+			});
+
+
+			var table = $('#example').DataTable({
+				"ajax": {
+					"url": "@Url.Action("GetBotSiteleri", "Api", new{Area="Admin"})",
+					"dataSrc": "",
+					"type": "POST",
+				},
+				"columns": [
+					{ data: "addressId",
+					  "width": "8%"	 },
+					{ data: "website",
+					  "width": "31%"	},
+					{ data: "regex" ,
+					  "width": "31%"	},
+					{ data: "proxyType.type" ,
+					  "width": "10%"	},
+					{ data: "addressId", render: function(data, type, row, meta) {
+							return '<button id="test1" onclick="duzenle(\'' + data + '\')" class="btn btn-warning" type="button" style="margin-right:15px;">Düzenle</button><button id="test1" onclick="sil(\'' + data + '\')" class="btn btn-danger" type="button" style="">Sil</button>';
+						}, orderable: false,
+					  "width": "20%"	
+					},
+				],
+				language: {
+					lengthMenu: "Tek sayfa _MENU_ adet göster",
+					search: "Ara:",
+					paginate: {
+						previous: '&nbsp;',
+						next: '&nbsp;'
+					},
+					infoEmpty: "Eşleşen site yok",
+					info: "Sayfa: _PAGE_ / _PAGES_",
+					infoFiltered: "(_MAX_ adet site içerisinde)",
+					zeroRecords: "Site yok",
+				},
+				dom: '<"d-flex justify-content-between align-items-center mx-0 row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>t<"d-flex justify-content-between mx-0 row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
+
+
+			});
+		});
+	</script>
+}

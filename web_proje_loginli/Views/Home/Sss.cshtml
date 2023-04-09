@@ -1,0 +1,35 @@
+﻿@{
+	ViewData["Title"] = "SSS";
+}
+
+<div class="row match-height">
+	<div role="tabpanel" class="tab-pane active" id="faq-payment" aria-labelledby="payment" aria-expanded="true">
+		<!-- icon and header -->
+		<div class="d-flex align-items-center">
+			<div class="avatar avatar-tag bg-light-primary me-1">
+				<i data-feather='info'></i>
+			</div>
+			<div>
+				<h4 class="mb-0">SSS</h4>
+				<span>Sıkça sorulan soruların cevabı burada</span>
+			</div>
+		</div>
+
+		<!-- frequent answer and question  collapse  -->
+		<div class="accordion accordion-margin mt-2" id="faq-sss">
+		</div>
+	</div>
+</div>
+
+@section scripts{
+	<script>
+		$(document).ready(function() {
+			$.get("@Url.Action("GetSSSList", "Api")", function(data) {
+				data.forEach(function(element, index) {
+					var item = "<div class='card accordion-item'><h2 class='accordion-header' id='sss"+index+"'><button class='accordion-button collapsed' data-bs-toggle='collapse' role='button' data-bs-target='#faq-soru-"+index+"' aria-expanded='false' aria-controls='faq-soru-"+index+"'>"+element.question+"</button></h2><div id='faq-soru-"+index+"' class='collapse' aria-labelledby=id='sss"+index+"' data-bs-parent='#faq-sss' style=''><div class='accordion-body'>"+element.answer+"</div></div></div>";
+					$("#faq-sss").append(item)
+				});
+			});
+		})
+	</script>
+}

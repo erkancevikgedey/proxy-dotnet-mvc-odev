@@ -1,0 +1,270 @@
+﻿@{
+	ViewData["Title"] = "Admin - Bekleyen Proxyler";
+}
+
+<div class="row match-height">
+
+	<div class="col-xl-12 col-md-6 col-12">
+		<div class="card">
+			<div class="card-header">
+				<h4 class="card-title">Tasarım Düzenleme</h4>
+			</div>
+			<div class="card-body">
+				<div class="mb-1">
+					<label class="d-block form-label" for="validationBioBootstrap">Anasayfa karşılama yazısı:</label>
+					<textarea class="form-control" id="anasayfaKarsilamaYazisi" rows="3" required="" style="height: 127px;"></textarea>
+				</div>
+				<div class="mb-1">
+					<label class="d-block form-label" for="validationBioBootstrap">Hakkımda sayfası yazısı:</label>
+					<textarea class="form-control" id="hakkimizdaSayfasiYazisi" rows="3" required="" style="height: 127px;"></textarea>
+				</div>
+				<div class="col text-center">
+					<button type="submit" class="btn btn-primary waves-effect waves-float waves-light" onclick="guncelle()">Kaydet</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row match-height">
+	<div class="col-xl-12 col-md-6 col-12">
+		<div class="card">
+			<div class="card-header">
+				<h4 class="card-title">Sıkça Sorulan Sorular Listesi</h4>
+				<div class="d-flex align-items-center">
+					<button id="test1" onclick="ekle()" class="btn btn-success waves-effect waves-float waves-light" type="button" style="margin-right:15px;">SSS Ekle</button>
+				</div>
+			</div>
+
+
+
+			<table id="example" class="display" style="width:100%; text-align: center; margin-bottom:50px">
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>Soru</th>
+						<th>Cevap</th>
+						<th>İşlemler</th>
+					</tr>
+				</thead>
+			</table>
+			<div class="card-body">
+			</div>
+		</div>
+	</div>
+</div>
+@section scripts{
+	<script>
+		function basari(mesaj) {
+			Swal.fire({
+				icon: 'success',
+				text: mesaj,
+				showCloseButton: true,
+				focusConfirm: false,
+				buttonsStyling: false,
+				customClass: {
+					confirmButton: 'btn btn-success'
+				}
+			});
+		}
+
+		function hata(mesaj) {
+			Swal.fire({
+				text: mesaj,
+				icon: 'error',
+				showCloseButton: true,
+				focusConfirm: false,
+				buttonsStyling: false,
+				customClass: {
+					confirmButton: 'btn btn-danger'
+				}
+			});
+		}
+
+		function guncelle() {
+            var anasayfaKarsilamaYazisi = $("#anasayfaKarsilamaYazisi").val();
+            var hakkimizdaSayfasiYazisi = $("#hakkimizdaSayfasiYazisi").val();
+            if (anasayfaKarsilamaYazisi == "" || hakkimizdaSayfasiYazisi == "") {
+                hata("Boş bırakılamaz");
+			}else{
+                $.ajax({
+                    url: "@Url.Action("YaziDuzenle", "Api", new{Area="Admin"})",
+                    type: 'post',
+                    data: { MainText: anasayfaKarsilamaYazisi, AboutText: hakkimizdaSayfasiYazisi }
+                }).done(function(r) {
+                    if (r.error) {
+                        hata(r.error);
+                    } else {
+                        basari(r.success);
+                    }
+                });
+			}
+		}
+
+		function ekle() {
+			Swal.fire({
+				html: '<div style="margin:50px"><div class="mb-1 row"><label for="colFormLabel" class="col-sm-3 col-form-label">Soru</label><div class="col-sm-9"><input type="text" class="form-control" id="soruEklenecek" placeholder="Soruyu Giriniz" /></div></div><div class="mb-1 row"><label for="colFormLabel" class="col-sm-3 col-form-label">Cevap</label><div class="col-sm-9"><input type="text" class="form-control" id="cevapEklenecek" placeholder="Cevabı Giriniz" /></div></div><button class="btn btn-primary" type="submit" onclick="onay()">Ekle</button></div>',
+				showCloseButton: true,
+				showConfirmButton: false,
+				focusConfirm: false,
+				buttonsStyling: false
+			});
+		}
+
+		function onay() {
+			var eklenecekSoru = $("#soruEklenecek").val();
+			var eklenecekCevap = $("#cevapEklenecek").val();
+			Swal.fire({
+				title: 'Emin misiniz?',
+				html: `Yeni <hr>Soru: ${eklenecekSoru}<br/>Cevap: ${eklenecekCevap}<hr>Şeklinde soru-cevap ekliyorsunuz!`,
+				icon: 'warning',
+				showCancelButton: true,
+				cancelButtonText: "Ekleme",
+				confirmButtonText: 'Evet, ekle!',
+				customClass: {
+					confirmButton: 'btn btn-primary',
+					cancelButton: 'btn btn-outline-danger ms-1'
+				},
+				buttonsStyling: false
+			}).then(function(result) {
+				if (result.value) {
+					$.ajax({
+						url: "@Url.Action("SoruCevapEkle", "Api", new{Area="Admin"})",
+						type: 'post',
+						data: { Soru: eklenecekSoru, Cevap: eklenecekCevap }
+					}).done(function(r) {
+						if (r.error) {
+							hata(r.error);
+						} else {
+							basari(r.success);
+							$('#example').DataTable().ajax.reload();
+						}
+					}
+					);
+				} else if (result.dismiss === Swal.DismissReason.cancel) {
+					hata('Eklenmedi');
+				}
+			});
+		}
+
+		function sil(id) { // id geliyor
+			Swal.fire({
+				title: 'Emin misiniz?',
+				text: "Geri dönüşü olmayacak!",
+				icon: 'warning',
+				showCancelButton: true,
+				cancelButtonText: "Silme",
+				confirmButtonText: 'Evet, sil!',
+				customClass: {
+					confirmButton: 'btn btn-primary',
+					cancelButton: 'btn btn-outline-danger ms-1'
+				},
+				buttonsStyling: false
+			}).then(function(result) {
+				if (result.value) {
+					$.ajax({
+						url: "@Url.Action("SoruCevapSil", "Api", new{Area="Admin"})",
+						type: 'post',
+						data: { Id: id }
+					}).done(function(r) {
+						if (r.error) {
+							hata(r.error);
+						} else {
+							basari(r.success);
+							$('#example').DataTable().ajax.reload();
+						}
+					}
+					);
+				} else if (result.dismiss === Swal.DismissReason.cancel) {
+					hata('Silinmedi');
+				}
+			});
+		}
+
+
+
+		function duzenle(id) { // id geliyor
+
+			$.ajax({
+				url: "@Url.Action("GetSSSDetay", "Api", new{Area="Admin"})",
+				type: 'post',
+				data: { Id: id }
+			}).done(function(r) {
+				Swal.fire({
+					html: '<div style="margin:50px"><div class="mb-1 row"><label for="colFormLabel" class="col-sm-3 col-form-label">Soru</label><div class="col-sm-9"><input type="text" class="form-control" id="duzenlenecekSoru"/></div></div><div class="mb-1 row"><label for="colFormLabel" class="col-sm-3 col-form-label">Cevap</label><div class="col-sm-9"><input type="text" class="form-control" id="duzenlenecekCevap"/></div></div><button class="btn btn-primary" type="submit" onclick="duzenleOnay(\'' + id + '\')">Kaydet</button></div>',
+					showCloseButton: true,
+					showConfirmButton: false,
+					focusConfirm: false,
+					buttonsStyling: false
+				});
+				$("#duzenlenecekSoru").val(r.question);
+				$("#duzenlenecekCevap").val(r.answer);
+			}
+			);
+		}
+
+		function duzenleOnay(id) {
+			var duzenlenmisSoru = $("#duzenlenecekSoru").val();
+			var duzenlenmisCevap = $("#duzenlenecekCevap").val();
+			$.ajax({
+				url: "@Url.Action("SoruCevapDuzenle", "Api", new{Area="Admin"})",
+				type: 'post',
+				data: { Id: id, DuzenlenmisSoru: duzenlenmisSoru, DuzenlenmisCevap: duzenlenmisCevap }
+			}).done(function(r) {
+				if (r.error) {
+					hata(r.error);
+				} else {
+					basari(r.success);
+					$('#example').DataTable().ajax.reload();
+				}
+			}
+			);
+		}
+
+		$(document).ready(function() {
+
+			var table = $('#example').DataTable({
+				"ajax": {
+					"url": "@Url.Action("GetSoruCevaplar", "Api", new{Area="Admin"})",
+					"dataSrc": "",
+					"type": 'POST',
+				},
+				"columns": [
+					{ data: "qaId" },
+					{ data: "question" },
+					{ data: "answer" },
+					{
+						data: "qaId", render: function(data, type, row, meta) {
+							return '<button id="test1" onclick="duzenle(\'' + data + '\')" class="btn btn-warning" type="button" style="margin-right:15px;">Düzenle</button><button id="test1" onclick="sil(\'' + data + '\')" class="btn btn-danger" type="button" style="">Sil</button>';
+						}, orderable: false
+					},
+				],
+				language: {
+					lengthMenu: "Tek sayfa _MENU_ adet göster",
+					search: "Ara:",
+					paginate: {
+						previous: '&nbsp;',
+						next: '&nbsp;'
+					},
+					infoEmpty: "Eşleşen SSS yok",
+					info: "Sayfa: _PAGE_ / _PAGES_",
+					infoFiltered: "(_MAX_ adet SSS içerisinde)",
+					zeroRecords: "SSS yok",
+				},
+				dom: '<"d-flex justify-content-between align-items-center mx-0 row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>t<"d-flex justify-content-between mx-0 row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
+
+
+			});
+
+			$.ajax({
+				url: "@Url.Action("GetSiteDetaylar", "Api", new{Area="Admin"})",
+				type: 'post',
+				data: { }
+			}).done(function(r) {
+                $("#anasayfaKarsilamaYazisi").val(r.anasayfa);
+                $("#hakkimizdaSayfasiYazisi").val(r.hakkimizda);
+			}
+			);
+
+		});
+	</script>
+		 }
